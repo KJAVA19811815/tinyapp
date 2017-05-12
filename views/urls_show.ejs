@@ -4,10 +4,23 @@
   <title>TinyApp</title>
 </head>
 <body>
+<header>
+<%
+</header>
 <ul>
-<li>www.youtube.com</li>
-<li>www.youtube.com/urls/b2xVn2</li>
+<% for(let url in urlDatabase) {%>
+  <li>
+    <%= url %> : <%= urlDatabase[url] %>
+    <form method="POST" action="/urls/<%= url %>">
+      <input type="text" name="newUrl">EDIT</button><br>
+      <button type="submit" value="edit">EDIT</button>
+    </form>
+  </li>
+<% } %>
 </ul>
     <!-- Add your EJS code here -->
 </body>
 </html>
+
+<input type="text" name="lname"><br>
+  <input type="submit" value="Submit">

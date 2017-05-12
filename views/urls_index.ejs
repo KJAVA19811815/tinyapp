@@ -4,10 +4,20 @@
   <title>TinyApp</title>
 </head>
 <body>
+<header>
+<% include ./partials/_headers %>
+</header>
 <ul>
-<li>www.facebook.com</li>
-<li>www.youtube.com</li>
-<li>www.lighthouselabs.ca</li>
+<% for(let url in urlDatabase) {%>
+  <li>
+    <%= url %> - - - -
+    <form method="POST" action="/urls/<%= url %>/delete">
+      <button type="submit" value="delete">DELETE</button>
+      <%= user_id %>
+    </form>
+  </li>
+<% } %>
+
 </ul>
     <!-- Add your EJS code here -->
 </body>

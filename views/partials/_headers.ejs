@@ -1,0 +1,14 @@
+<div>
+  <% if(email) { %>
+    <p><%= email %></p>
+    <form action="/logout" method="POST">
+      <input type="submit" value="Logout" style="margin:10px;">
+    </form>
+  <% } else { %>
+    <nav>
+      <a href="/login">Login</a>
+      <a href="/register">Register</a>
+    </nav>
+  <% } %>
+  <p>HELLO</p>
+</div>
