@@ -75,10 +75,19 @@ const users = {
     password: "dishwasher-funk"
   }
 };
+app.get("/", (req, res) => {
+  res.end("HELLO I HATE U");
+})
 
 app.get("/urls", (req,res) => {
   let user_id = req.cookies.user_id
-  let email = users[user_id].email;
+  if(!user_id) {
+     var email = "";
+  } else {
+    var email = users[user_id].email;
+
+  }
+  //let email = users[user_id].email;
   let templateVars = {urlDatabase: urlDatabase, user_id:req.cookies.user_id, email : email};
   res.render("urls_index", templateVars);
 });
@@ -160,7 +169,7 @@ app.post("/login", (req, res) => {
     let userId = checkUser(email, pass);
     if(userId) {
       res.cookie('user_id', userId)
-      res.redirect("/urls")
+      res.redirect("/")
     } else {
       res.sendStatus(400);
     }
@@ -181,10 +190,14 @@ app.post("/register", (req, res) => {
     }
   }
   console.log(users);
-
-  //req.session.user_id = userId;
   res.redirect("/urls");
 });
+
+app.post("/logout", (req, res) => {
+  res.clearCookie("user_id");
+  res.redirect("/urls");
+
+})
 
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}`);
