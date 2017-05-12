@@ -11,32 +11,91 @@ function generateRandomNumberString() {
   return Math.random().toString(36).substring(2,8);
 }
 
+function canRegister(email) {
+  let mail = true;
+  for (let user in users) {
+    if (users[user].email === email) {
+      return false;
+    }
+  }
+  return true;
+}
+
+function addUser(email,password) {
+  let newUserId = "";
+  do {
+    newUserId = generateRandomNumberString();
+  } while(users[newUserId])
+  // key is now unique and add the pair
+  users[newUserId] = {
+    id: newUserId,
+    email: email,
+    password: password
+  };
+  return newUserId;
+
+}
+
+function checkUser(email, password) {
+  for(let user in users) {
+    if(users[user].email === email  && users[user].password === password) {
+      return user;
+    }
+  }
+  return "";
+  //iterate the for loop
+
+
+    // 1st: user = userRandomID
+    //  users[user] = {}
+    //  users[user].email
+
+}
 
 var urlDatabase = {
-  "b2xVn2": "http://www.lighthouselabs.ca",
-  "9sm5xK": "http://www.google.com"
+  "b2xVn2": {
+    url: "http://www.lighthouselabs.ca",
+    userID: 'userRandomID'
+            },
+  "9sm5xK": {
+    url: "http://www.google.com",
+    userID: 'user2RandomID'
+            }
+};
+
+const users = {
+  "userRandomID": {
+    id: "userRandomID",
+    email: "user@example.com",
+    password: "purple-monkey-dinosaur"
+  },
+  "user2RandomID": {
+    id: "user2RandomID",
+    email: "user2@example.com",
+    password: "dishwasher-funk"
+  }
 };
 
 app.get("/urls", (req,res) => {
-
-  let templateVars = {urlDatabase: urlDatabase, cookieUsername:req.cookies.username};
+  let user_id = req.cookies.user_id
+  let email = users[user_id].email;
+  let templateVars = {urlDatabase: urlDatabase, user_id:req.cookies.user_id, email : email};
   res.render("urls_index", templateVars);
 });
 
 app.get("/urls/:id", (req, res) => {
-  let templateVars = { shortURL : req.params.id, urlDatabase: urlDatabase };
+  let user_id = req.cookies.user_id
+  let email = users[user_id].email;
+  let templateVars = { shortURL : req.params.id, urlDatabase: urlDatabase, user_id:req.cookies.user_id, email :email };
   res.render("urls_show", templateVars);
   // console.log(generateRandomNumberString());
 });
 
 app.get("/urls/new", (req, res) => {
-   let templateVars = {urlDatabase: urlDatabase, cookieUsername:req.cookies.username};
+  let user_id = req.cookies.user_id
+  let email = users[user_id].email;
+   let templateVars = {urlDatabase: urlDatabase, user_id:req.cookies.user_id, email: email};
   res.render("urls_new", templateVars);
-});
-
-app.post("/urls", (req, res) => {
-  console.log(req.body);
-  res.send("OK");
 });
 
 app.get("/hello", (req, res) => {
@@ -49,6 +108,28 @@ app.get("/u/:shortURL", (req, res) => {
   console.log(longURL);
   res.redirect(longURL);
 });
+
+//REGISTER
+app.get("/register", (req, res) => {
+  //let user_id = req.cookies.user_id
+//  let email = "";
+//    res.render("urls_register", {user_id:req.cookies.user_id, email : email});
+    res.render("urls_register", {});
+  });
+
+app.get("/login", (req, res) => {
+//  let user_id = req.cookies.user_id
+  let email = "";//users[user_id].email;
+  let templateVars = {
+    email: email,
+    user_id: false,
+    username: ""
+  }
+  res.render("urls_login", templateVars)
+});
+
+
+
 //deleting url
 
 app.post("/urls/:id/delete", (req, res) => {
@@ -69,18 +150,40 @@ app.post("/urls/:id", (req, res) => {
   res.redirect("/urls/<%= id %>")
 });
 
-//cookie
 app.post("/login", (req, res) => {
-
-  res.cookie('username', req.body.username)
-
-  //res.render("../.._headers.ejs")
-  res.redirect("/urls")
+  let email = req.body.email;
+  let pass = req.body.password;
+  //res.cookie('user_id', userId)
+  if (!req.body.email || !req.body.password) {
+    res.sendStatus(400);  // Bad Request
+  } else {
+    let userId = checkUser(email, pass);
+    if(userId) {
+      res.cookie('user_id', userId)
+      res.redirect("/urls")
+    } else {
+      res.sendStatus(400);
+    }
+  }
 });
 
-app.post("/logout", (req, res) => {
-res.clearCookie('username');
-res.redirect("/urls");
+app.post("/register", (req, res) => {
+  //let userId = addUser(req.body.email, req.body.password);
+  //res.cookie('user_id', userId)
+  if (!req.body.email || !req.body.password) {
+    res.sendStatus(400);
+  } else {
+    if (canRegister()) {
+      let userId = addUser(req.body.email, req.body.password);
+       res.cookie('user_id', userId)
+    } else {
+      res.sendStatus(400);
+    }
+  }
+  console.log(users);
+
+  //req.session.user_id = userId;
+  res.redirect("/urls");
 });
 
 app.listen(PORT, () => {
