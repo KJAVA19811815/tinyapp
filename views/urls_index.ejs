@@ -8,13 +8,20 @@
 <% include ./partials/_headers %>
 </header>
 <ul>
-<% for(let url in urlDatabase) {%>
+<% for(var shortUrl in urls) {%>
   <li>
-    <%= url %> - - - -
-    <form method="POST" action="/urls/<%= url %>/delete">
+    <a href="http://www.<%= urls[shortUrl] %>"><%= shortUrl %></a>
+    <%= urls[shortUrl]%>
+    <form method="POST" action="/urls/<%= shortUrl %>/delete">
       <button type="submit" value="delete">DELETE</button>
-      <%= user_id %>
+
+
     </form>
+
+    <form method="POST" action="/urls/<%= shortUrl %>">
+      <input type = "text" name="newUrl">
+      <button type="submit" value="update">UPDATE</button>
+     </form>
   </li>
 <% } %>
 

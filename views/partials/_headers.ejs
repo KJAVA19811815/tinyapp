@@ -1,6 +1,9 @@
 <div>
   <% if(email) { %>
     <p><%= email %></p>
+    <p>ADD A URL</p>
+    <a href="/urls/new">CLICK HERE TO ADD NEW</a>
+    <a href="/urls">CLICK HERE TO SEE URLS</a>
     <form action="/logout" method="POST">
       <input type="submit" value="Logout" style="margin:10px;">
     </form>
