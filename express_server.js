@@ -171,9 +171,6 @@ app.get("/u/:shortURL", (req, res) => {
 
 //REGISTER
 app.get("/register", (req, res) => {
-  //let user_id = req.cookies.user_id
-//  let email = "";
-//    res.render("urls_register", {user_id:req.cookies.user_id, email : email});
     res.render("urls_register", {});
   });
 
