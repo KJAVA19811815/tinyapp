@@ -11,13 +11,14 @@
 <ul>
 <% for(var shortUrl in urls) {%>
   <li>
-    <a href="http://www.<%= urls[shortUrl] %>"><%= shortUrl %></a>
+    <a href="<%= urls[shortUrl] %>"><%= shortUrl %></a>
     <%= urls[shortUrl]%>
     <form method="POST" action="/urls/<%= shortUrl %>/delete">
       <button type="submit" value="delete">DELETE</button>
 
 
     </form>
+    <a href= "/urls/<%= shortUrl %>">DETAILS</a>
 
     <form method="POST" action="/urls/<%= shortUrl %>">
       <input type = "text" name="newUrl">

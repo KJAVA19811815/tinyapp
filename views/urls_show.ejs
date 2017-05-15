@@ -6,18 +6,17 @@
 <body style="background-color: skyblue; border-style: solid;
     border-color: black;">
 <header>
-<%
 </header>
 <ul>
-<% for(let url in urlDatabase) {%>
   <li>
-    <%= url %> : <%= urlDatabase[url] %>
-    <form method="POST" action="/urls/<%= url %>">
+    <%= shortURL %> : <%= urlDatabase[shortURL].url %>
+    <form method="POST" action="/urls/<%= shortURL %>">
       <input type="text" name="newUrl">EDIT</button><br>
       <button type="submit" value="edit">EDIT</button>
     </form>
+
+
   </li>
-<% } %>
 </ul>
     <!-- Add your EJS code here -->
 </body>

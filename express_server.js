@@ -13,8 +13,8 @@ app.set("view engine", "ejs")
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(cookieSession({
   name: "session",
-  keys: ["This-is-my-secrete-key"],
-  maxAge: 60 * 60 * 1000 // 1 hour
+  keys: ["This-is-my-secrete-key"]
+  //maxAge: 60 * 60 * 1000 // 1 hour
 }));
 
 //ALL THE FUNCTIONS USED IN THE PROGRAM
@@ -46,6 +46,14 @@ function addUser(email,password) {
   };
   return newUserId;
 
+}
+
+function getUserById(id) {
+  for (var i in users) {
+    if (users[i].id === id) {
+      return users[i];
+    }
+  }
 }
 
 function checkUser(email, password) {
@@ -99,8 +107,13 @@ const users = {
 
 
 app.get("/", (req, res) => {
-  res.end("HELLO I HATE U");
-})
+  let fullUser = getUserById(req.session.user_id);
+  if(fullUser) {
+    res.redirect("/urls");
+  } else {
+    res.redirect("/register");
+  }
+});
 
 // function that checks userID
 
@@ -146,11 +159,15 @@ app.get("/urls/new", (req, res) => {
 
 // TO SHOW SPECIFIC URL
 app.get("/urls/:id", (req, res) => {
-  let user_id = req.session.user_id
+  let user_id = req.session.user_id;
+  if (!user_id)  {
+    res.redirect("/")
+    return;
+  }
+  //let user_id = req.session.user_id;
   let email = users[user_id].email;
-  let templateVars = { shortURL : req.params.id, urlDatabase: urlDatabase, user_id:req.session.user_id, email :email };
+  let templateVars = { shortURL: req.params.id, urlDatabase: urlDatabase, user_id:req.session.user_id, email :email };
   res.render("urls_show", templateVars);
-  // console.log(generateRandomNumberString());
 });
 
 app.get("/hello", (req, res) => {
@@ -217,8 +234,8 @@ app.post("/urls/:id", (req, res) => {
     url: newUrl,
     userID: req.session.user_id
   }
-  //let shortURL ;
-  //urlDatabase[shortURL] = newUrl
+  let shortURL ;
+  urlDatabase[shortURL] = newUrl
   console.log(urlDatabase)
   res.redirect("/urls")
 });
@@ -262,8 +279,11 @@ app.post("/register", (req, res) => {
 
 //TO LOGOUT
 app.post("/logout", (req, res) => {
-  res.clearCookie("user_id");
-  res.redirect("/login");
+  req.session.user_id = null;
+  res.redirect("/urls");
+  //req session = null;
+  //res.clearCookie("user_id");
+  //res.redirect("/login");
 
 });
 
@@ -277,7 +297,7 @@ app.post("/urls", (req, res) => {
     url: long,
     userID: cook
   }
-  res.redirect("/urls");
+  res.redirect("/urls/");
 
 });
 
